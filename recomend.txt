@@ -10,3 +10,4 @@ six==1.16.0
 tornado==6.1
 tzdata==2022.4
 tzlocal==4.2
+emoji==2.1.0 

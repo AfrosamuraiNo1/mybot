@@ -63,11 +63,11 @@ def guess_number(update, context):
         message = "Введите целое число"
     update.message.reply_text(message)
 
-def send_cat_picture(update, context):
-    cat_photos_list = glob('img/*.jp*g')
-    cat_pic_filename = choice(cat_photos_list)
+def send_foto_picture(update, context):
+    foto_photos_list = glob('img/*.jp*g')
+    foto_pic_filename = choice(foto_photos_list)
     chat_id = update.effective_chat.id
-    context.bot.send_photo(chat_id=chat_id, photo=open(cat_pic_filename, 'rb'))
+    context.bot.send_photo(chat_id=chat_id, photo=open(foto_pic_filename, 'rb'))
 
 
 def main():
@@ -77,7 +77,7 @@ def main():
     
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", greet_user))
-    dp.add_handler(CommandHandler("cat", send_cat_picture))
+    dp.add_handler(CommandHandler("cat", send_foto_picture))
     dp.add_handler(CommandHandler("planet", planet_user))
     dp.add_handler(CommandHandler("guess", guess_number))
     dp.add_handler(MessageHandler(Filters.text, planet))

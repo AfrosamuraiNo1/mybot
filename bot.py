@@ -1,6 +1,7 @@
 import logging
 import ephem
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram import ReplyKeyboardMarkup
 from datetime import datetime
 from random import randint, choice
 from glob import glob
@@ -10,23 +11,25 @@ import settings
 
 logging.basicConfig(filename='bot.log', level=logging.INFO)
 
+def main_keyboard():
+    return ReplyKeyboardMarkup([['Прислать котика','Test']])
 
 def greet_user(update, context):
     print('Вызван /start')
     context.user_data['emoji'] = get_smile(context.user_data)
-    update.message.reply_text(f"Здравствуй, пользователь {context.user_data['emoji']}!")
+    update.message.reply_text(f"Здравствуй, пользователь {context.user_data['emoji']}!", reply_markup=main_keyboard())
 
 def talk_to_me(update, context):
     context.user_data['emoji'] = get_smile(context.user_data)
 #    username = update.effective_user.first_name
     text = update.message.text
     print(text)
-    update.message.reply_text(f"{text} {context.user_data['emoji']}")
+    update.message.reply_text(f"{text} {context.user_data['emoji']}", reply_markup=main_keyboard())
 
 def get_smile(user_data):
     if 'emoji' not in user_data:
         smile = choice(settings.USER_EMOJI)
-        return emojize(smile, language='alias')
+        return emojize(smile, use_aliases=True)
     return user_data['emoji']
 
 
@@ -67,7 +70,7 @@ def send_foto_picture(update, context):
     foto_photos_list = glob('img/*.jp*g')
     foto_pic_filename = choice(foto_photos_list)
     chat_id = update.effective_chat.id
-    context.bot.send_photo(chat_id=chat_id, photo=open(foto_pic_filename, 'rb'))
+    context.bot.send_photo(chat_id=chat_id, photo=open(foto_pic_filename, 'rb'), reply_markup=main_keyboard())
 
 
 def main():
@@ -80,6 +83,7 @@ def main():
     dp.add_handler(CommandHandler("cat", send_foto_picture))
     dp.add_handler(CommandHandler("planet", planet_user))
     dp.add_handler(CommandHandler("guess", guess_number))
+    dp.add_handler(MessageHandler(Filters.regex('^(Прислать фото)$'), send_foto_picture))
     dp.add_handler(MessageHandler(Filters.text, planet))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
     
